@@ -31,38 +31,37 @@ for wf_item in workflows:
     wf = copy.deepcopy(wf_item)
     steps = wf.get("definition", {}).get("steps", {})
     wf_id = wf.get("id")
-    if wf_id == "179e1881-7f51-49fe-9b52-1cb235f039f8":
-        patch_operations = []
+    patch_operations = []
 
-        for key, value in steps.items():
-            if value.get("actionId") == "sp:http":
-                attributes = value.get("attributes", {})
-                http_url = attributes.get("url")
-                if http_url:
-                    updated_http_url = re.sub(
-                        r"/(v[^/]+|beta)/",
-                        f"/{config_info.NEW_API_VERSION}/",
-                        http_url,
-                        count=1
-                    )
-                    if updated_http_url != http_url:
-                        patch_operations.append({
-                            "op": "replace",
-                            "path": f"/definition/steps/{key}/attributes/url",
-                            "value": updated_http_url
-                        })
+    for key, value in steps.items():
+        if value.get("actionId") == "sp:http":
+            attributes = value.get("attributes", {})
+            http_url = attributes.get("url")
+            if http_url:
+                updated_http_url = re.sub(
+                    r"/(v[^/]+|beta)/",
+                    f"/{config_info.NEW_API_VERSION}/",
+                    http_url,
+                    count=1
+                )
+                if updated_http_url != http_url:
+                    patch_operations.append({
+                        "op": "replace",
+                        "path": f"/definition/steps/{key}/attributes/url",
+                        "value": updated_http_url
+                    })
 
-        if patch_operations:
-            update_wf_url = f"{config_info.API_URL}/{config_info.NEW_API_VERSION}/workflows/{wf_id}"
+    if patch_operations:
+        update_wf_url = f"{config_info.API_URL}/{config_info.NEW_API_VERSION}/workflows/{wf_id}"
 
-            headers = {
-                'Content-Type': 'application/json-patch+json',
-                'Accept': 'application/json',
-                'Authorization': f'Bearer {access_token}'
-            }
+        headers = {
+            'Content-Type': 'application/json-patch+json',
+            'Accept': 'application/json',
+            'Authorization': f'Bearer {access_token}'
+        }
 
-            response = requests.patch(update_wf_url, headers=headers, data=json.dumps(patch_operations))
+        response = requests.patch(update_wf_url, headers=headers, data=json.dumps(patch_operations))
 
-            print(f"PATCH status: {response.status_code}")
-        else:
-            print("No updates needed. All URLs are already up to date.")
+        print(f"PATCH status: {response.status_code}")
+    else:
+        print("No updates needed. All URLs are already up to date.")
