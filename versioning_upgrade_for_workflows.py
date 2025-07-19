@@ -1,3 +1,11 @@
+# Author : Youssef AGHZERE
+# LinkedIn : https://www.linkedin.com/in/youssef-aghzere-437a19218/
+# Description : This script will help you update the version of sailpoint API endpoints of all the HTTP Requests steps
+#  of the workflows in your tenant in bulk. All you have left to do is monitor your workflows. It is possible of course 
+#  to apply it on workflows or a set of specific workflows by adding a filter with conditional "if" close to only filter the workflows with specific IDs
+# You have the right to use it, update it, or share it, but no commercial use of this script is allowed. 
+
+
 import requests
 import config_info
 import json
